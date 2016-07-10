@@ -9,7 +9,7 @@ Element::Element(size_t size, const double ratio[])
 }
 
 
-double Element::dist(const Element& e) {
+double Element::dist(const Element& e) const {
 	double d = 0.0, tmp;
 	for (size_t i = 0; i < data.size(); ++i) {
 		tmp = data[i] - e.data[i];

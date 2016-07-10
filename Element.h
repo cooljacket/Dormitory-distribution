@@ -20,7 +20,7 @@ public:
 	// : data(raw_data) {}
 
 
-	double dist(const Element& e);
+	double dist(const Element& e) const;
 	void clear();
 	Element& operator += (const Element& e);
 	Element& operator /= (double divisor);
