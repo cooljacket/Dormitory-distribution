@@ -1,0 +1,22 @@
+sex(0, 1)
+location(0, 1)
+
+ratio
+
+1
+0 0 0 1
+
+
+2
+1 1 0 0
+3
+
+...
+0-3
+id, sex(01), location(01), sleep_time(A->1, B->4, C->9, D->16), getup_time(~), character_type(A->1, B->3, C->2), hobbies(6 dims, 01*hb_ratio), influenced(A->1, B->0, C->0.5), income(~,4), jiti(A->1, B->0), air_conditioner(A->1, B->0, C->0.5)
+
+double question_ratio[] = {0, 0.2, 0.2, 0.15, 0.15, 0.1, 0.1, 0.05, 0.05};
+double hobby_ration[] = {0.2, 0.1, 0.05, 0.5, 0.15, 0};
+
+13340666,1,0,1,1,1,0,0,1,0,1,2,3,0,0
+13349555,1,0,1,1,1,0,0,1,0,1,2,0,0,0
