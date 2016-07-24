@@ -1,5 +1,7 @@
 #include "Student.h"
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 
 
 const double Student::question_ratio[] = {0, 0, 0.2, 0.2, 0.15, 0.15, 0.1, 0.1, 0.05, 0.05};
@@ -61,27 +63,28 @@ void Student::display() const {
 }
 
 
-void Student::output() const {
-	printf("%d", id);
+void Student::output(ostream& out) const {
+	out << id;	// printf("%d", id);
+
 	for (int i = 0; i < size; ++i) {
 		if (i == 5) {
-			printf(",\"");
+			out << ",\"";// printf(",\"");
 			bool have = false;
 			for (int j = 0; j < 6; ++i, ++j) {
 				if (!have && answers[i][int(raw_data[i])].size() > 0) {
 					have = true;
-					printf("%s", answers[i][int(raw_data[i])].c_str());
+					out << answers[i][int(raw_data[i])];// printf("%s", answers[i][int(raw_data[i])].c_str());
 				}
 				else if (answers[i][int(raw_data[i])].size() > 0)
-					printf(",%s", answers[i][int(raw_data[i])].c_str());
+					out << ',' << answers[i][int(raw_data[i])];// printf(",%s", answers[i][int(raw_data[i])].c_str());
 			}
-			printf("\"");
+			out << "\"";// printf("\"");
 			--i;
 		}
 		else
-			printf(",%s", answers[i][int(raw_data[i])].c_str());
+			out << ',' << answers[i][int(raw_data[i])];// printf(",%s", answers[i][int(raw_data[i])].c_str());
 	}
-	printf("\n");
+	out << endl;// printf("\n");
 }
 
 

@@ -3,6 +3,7 @@
 
 
 #include <stdio.h>
+#include <iostream>
 #include <vector>
 #include <map>
 #include <set>
@@ -145,7 +146,7 @@ public:
 			printf("In centroids [%d], there have:\n", int(c));
 			for (size_t e = 0; e < size; ++e) {
 				if (my_centroids[e] == c)
-					elements[e].output();
+					elements[e].output(cout);
 			}
 
 			printf("-----------\n\n\n");

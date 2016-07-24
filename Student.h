@@ -2,7 +2,7 @@
 #define __STUDENT__H
 
 #include "Element.h"
-#include <istream>
+#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -23,7 +23,7 @@ public:
 	friend istream& operator >> (istream& is, Student& stu);
 	double sqrt_trans(double x);
 	void display() const;
-	void output() const;
+	void output(ostream& out) const;
 	int getKind();
 
 	enum KIND {

@@ -8,7 +8,7 @@ using namespace std;
 
 size_t findNearestExclude(const Student& key, const vector<Student>& group, size_t exclude);
 void CombGroupIntoPairs(vector<Student>& group, vector<Student>& comb, vector<pair<Student, Student> >& pairs, vector<Student>& special);
-void divide(vector<Student>& GroupA, vector<Student>& GroupB);
+void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out);
 
 
 int main(int argc, char* argv[]) {
@@ -24,9 +24,14 @@ int main(int argc, char* argv[]) {
 		all_stus[tmp.getKind()].push_back(tmp);
 	data.close();
 
-	divide(all_stus[Student::GIRLS_IN], all_stus[Student::GIRLS_OUT]);
-	divide(all_stus[Student::BOYS_IN], all_stus[Student::BOYS_OUT]);
-	
+	fstream girls_output("女生宿舍分配情况.csv", ios::out);
+	fstream boys_output("男生宿舍分配情况.csv", ios::out);
+
+	divide(all_stus[Student::GIRLS_IN], all_stus[Student::GIRLS_OUT], girls_output);
+	divide(all_stus[Student::BOYS_IN], all_stus[Student::BOYS_OUT], boys_output);
+
+	boys_output.close();
+	girls_output.close();
 
 	return 0;
 }
@@ -98,7 +103,7 @@ void CombGroupIntoPairs(vector<Student>& group, vector<Student>& comb, vector<pa
 1）尽量均匀出现在GroupA和GroupB中，比如2个来自A同时两个来自B；
 2）同个宿舍的人的各项指标尽量相似，如兴趣爱好相近，生活习惯相近，家庭收入相近等等。
 */
-void divide(vector<Student>& GroupA, vector<Student>& GroupB) {
+void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out) {
 	if (GroupA.size() > GroupB.size())
 		swap(GroupA, GroupB);
 
@@ -154,13 +159,13 @@ void divide(vector<Student>& GroupA, vector<Student>& GroupB) {
 	if (!special.empty())
 		result.push_back(special);
 
-	cout << "宿舍号,学号,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,家庭人均收入,集体住宿经历,喜欢开空调" << endl;
+	out << "宿舍号,学号,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,家庭人均收入,集体住宿经历,喜欢开空调" << endl;
 	for (int i = 0; i < result.size(); ++i) {
-		cout << i+1;
+		out << i+1;
 		for (int j = 0; j < result[i].size(); ++j) {
-			cout << ',';
-			result[i][j].output();
+			out << ',';
+			result[i][j].output(out);
 		}
-		cout << endl;
+		out << endl;
 	}
 }
