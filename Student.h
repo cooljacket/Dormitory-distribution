@@ -14,12 +14,13 @@ class Student : public Element
 	static const double MIN[size];
 	static const double MAX[size];
 	static const string answers[size][6];
-	int id;
+	string id, name;
 	vector<double> raw_data;
 	
 	
 public:
 	Student();
+	Student(const vector<string>& row);
 	friend istream& operator >> (istream& is, Student& stu);
 	double sqrt_trans(double x);
 	void display() const;

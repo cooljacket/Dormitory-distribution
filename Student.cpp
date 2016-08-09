@@ -1,4 +1,5 @@
 #include "Student.h"
+#include "transform.h"
 #include <stdio.h>
 #include <iostream>
 using namespace std;
@@ -31,9 +32,28 @@ Student::Student()
 : Element(size, question_ratio) {}
 
 
+Student::Student(const vector<string>& row)
+: Element(size, question_ratio), id(row[0]), name(row[1]) {
+	for (int i = 2; i < row.size(); ++i)
+		data[i-2] = str2int(row[i]);
+
+	raw_data = data;
+
+	data[2] = sqrt_trans(data[2]);
+	data[3] = sqrt_trans(data[3]);
+	data[12] = sqrt_trans(data[12]);
+	for (int i = 0; i < 6; ++i)
+		data[i+5] *= hobby_ratio[i];
+	for (int i = 0; i < size; ++i)
+		if (i != 10)
+			data[i] = (data[i] - MIN[i]) / (MAX[i] - MIN[i]);
+}
+
+
 istream& operator >> (istream& is, Student& stu) {
 	char buf;
 	is >> stu.id;
+	cout << "heheheh " << stu.id << ' ' << stu.name << endl;
 	for (int i = 0; i < stu.size; ++i)
 		is >> buf >> stu.data[i];
 	stu.raw_data = stu.data;
@@ -56,7 +76,7 @@ double Student::sqrt_trans(double x) {
 
 
 void Student::display() const {
-	printf("Id is %d", id);
+	printf("Id is %s", id.c_str());
 	for (int i = 0; i < size; ++i)
 		printf(", %.3lf", data[i]);
 	printf("\n");
@@ -64,27 +84,27 @@ void Student::display() const {
 
 
 void Student::output(ostream& out) const {
-	out << id;	// printf("%d", id);
+	out << id << ',' << name;
 
 	for (int i = 0; i < size; ++i) {
 		if (i == 5) {
-			out << ",\"";// printf(",\"");
+			out << ",\"";
 			bool have = false;
 			for (int j = 0; j < 6; ++i, ++j) {
 				if (!have && answers[i][int(raw_data[i])].size() > 0) {
 					have = true;
-					out << answers[i][int(raw_data[i])];// printf("%s", answers[i][int(raw_data[i])].c_str());
+					out << answers[i][int(raw_data[i])];
 				}
 				else if (answers[i][int(raw_data[i])].size() > 0)
-					out << ',' << answers[i][int(raw_data[i])];// printf(",%s", answers[i][int(raw_data[i])].c_str());
+					out << ',' << answers[i][int(raw_data[i])];
 			}
-			out << "\"";// printf("\"");
+			out << "\"";
 			--i;
 		}
 		else
-			out << ',' << answers[i][int(raw_data[i])];// printf(",%s", answers[i][int(raw_data[i])].c_str());
+			out << ',' << answers[i][int(raw_data[i])];
 	}
-	out << endl;// printf("\n");
+	out << endl;
 }
 
 

@@ -1,10 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+
 #include "Student.h"
 #include "KMeans.h"
+#include "transform.h"
 
 using namespace std;
+
+extern const char* file_after_process;
+
 
 size_t findNearestExclude(const Student& key, const vector<Student>& group, size_t exclude);
 void CombGroupIntoPairs(vector<Student>& group, vector<Student>& comb, vector<pair<Student, Student> >& pairs, vector<Student>& special);
@@ -13,23 +18,31 @@ void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out);
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
-		cout << "usage: main input_data" << endl;
+		cout << "usage: main original_data" << endl;
 		return 0;
 	}
 
-	fstream data(argv[1], ios::in);
+
+	// 先把从问卷星得到的原始数据进行预处理及变换
+	transform_original_data(argv[1]);
+
+	cout << argv[1] << ' ' << file_after_process << endl;
+	// 首先读取处理过后的数据，成为4个组：男省内，男省外，女省内，女省外
 	vector<vector<Student> > all_stus(4);
-	Student tmp;
-	while (data >> tmp)
-		all_stus[tmp.getKind()].push_back(tmp);
-	data.close();
+	vector<vector<string> > data;
+	CSVReader reader;
+	reader.read(file_after_process, data, false);
+	for (int i = 0; i < data.size(); ++i) {
+		Student stu(data[i]);
+		all_stus[stu.getKind()].push_back(stu);
+	}
 
-	fstream girls_output("女生宿舍分配情况.csv", ios::out);
-	fstream boys_output("男生宿舍分配情况.csv", ios::out);
 
+	// 接下来是分配算法的主体
+	fstream girls_output("results/女生宿舍分配情况.csv", ios::out);
+	fstream boys_output("results/男生宿舍分配情况.csv", ios::out);
 	divide(all_stus[Student::GIRLS_IN], all_stus[Student::GIRLS_OUT], girls_output);
 	divide(all_stus[Student::BOYS_IN], all_stus[Student::BOYS_OUT], boys_output);
-
 	boys_output.close();
 	girls_output.close();
 
@@ -109,17 +122,20 @@ void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out) {
 
 	// Step 1: 使用kmeans抽取GroupB中尽量不同的人到GroupA中
 	int num = (GroupB.size() - GroupA.size()) / 2;
-	KMeans<Student> km(GroupB, num, 15);
-	km.train_inc();
-	km.explain();
-	vector<size_t> reps = km.getSortedRepresentative();
-	for (int i = reps.size()-1, j=GroupB.size()-1; i >= 0; --i, --j) {
-		swap(GroupB[reps[i]], GroupB[j]);
+	if (num > 0) {
+		KMeans<Student> km(GroupB, num, 15);
+		km.train_inc();
+		km.explain();
+		vector<size_t> reps = km.getSortedRepresentative();
+		for (int i = reps.size()-1, j=GroupB.size()-1; i >= 0; --i, --j) {
+			swap(GroupB[reps[i]], GroupB[j]);
+		}
+		for (int i = 0; i < num; ++i) {
+			GroupA.push_back(*(GroupB.rbegin()));
+			GroupB.pop_back();
+		}
 	}
-	for (int i = 0; i < num; ++i) {
-		GroupA.push_back(*(GroupB.rbegin()));
-		GroupB.pop_back();
-	}
+
 
 
 	// Step 2: 每个组内按相似度两两结合，没法结合的元素单独放到“special宿舍”中
@@ -159,7 +175,7 @@ void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out) {
 	if (!special.empty())
 		result.push_back(special);
 
-	out << "宿舍号,学号,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,家庭人均收入,集体住宿经历,喜欢开空调" << endl;
+	out << "宿舍号,学号,姓名,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,家庭人均收入,集体住宿经历,喜欢开空调" << endl;
 	for (int i = 0; i < result.size(); ++i) {
 		out << i+1;
 		for (int j = 0; j < result[i].size(); ++j) {

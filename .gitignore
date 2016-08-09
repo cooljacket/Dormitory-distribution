@@ -1,3 +1,6 @@
 out
-*.csv
 *.o
+*.csv
+*.xls
+*.xlsx
+results/*
