@@ -1,6 +1,7 @@
 #include "transform.h"
 
 const char* file_after_process = "data/data.csv";
+const char* not_in_the_list = "results/not_in_the_list.txt";
 
 
 int transform_original_data(const char* inputFile) {
@@ -45,10 +46,15 @@ void transform(const char* inputFile, const char* outputFile, const char* studen
 	reader.read(inputFile, data);
 
 	fstream out(outputFile, ios::out);
+	set<string> names;
 
 	bool mask[] = {0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1};
 
 	for (int i = 0; i < data.size(); ++i) {
+		if (names.find(data[i][7]) != names.end())
+			continue;
+		names.insert(data[i][7]);
+
 		if (list.find(data[i][7]) == list.end()) {
 			cout << "ERROR!!!!!No such man " << data[i][7] << endl;
 			return ;
@@ -66,4 +72,15 @@ void transform(const char* inputFile, const char* outputFile, const char* studen
 	}
 
 	out.close();
+
+
+	// 最后还要输出没有填问卷的那部分学生的名字
+	fstream others(not_in_the_list, ios::out);
+	map<string, string>::iterator it = list.begin();
+	while (it != list.end()) {
+		if (names.find(it->first) == names.end())
+			others << it->second << ", " << it->first << endl;
+		++it;
+	}
+	others.close();
 }
