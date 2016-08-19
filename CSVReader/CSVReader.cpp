@@ -1,12 +1,11 @@
 #include "CSVReader.h"
 
-
-CSVReader::CSVReader()
-: cell_delimiter(','), line_delimiter('\n')
-{}
+char CSVReader::cell_delimiter = ',';
+char CSVReader::line_delimiter= '\n';
 
 
-void CSVReader::read(const char* fileName, vector<vector<string> >& data, bool haveHeader) {
+// read the original csv file data into the Container
+void CSVReader::read(const char* fileName, CSVContainerAdapter* adapter, bool haveHeader) {
 	fstream in(fileName, ios::in);
 	string line;
 
@@ -14,22 +13,24 @@ void CSVReader::read(const char* fileName, vector<vector<string> >& data, bool h
 		getline(in, line, line_delimiter);
 
 	while (getline(in, line, line_delimiter)) {
-		vector<string> cells;
-		line_to_cells(line, cells);
-		data.push_back(cells);
+		line_to_cells(line, adapter);
 	}
 
 	in.close();
 }
 
 
-void CSVReader::line_to_cells(const string& line, vector<string>& cells) {
+// split a line to be a sort of cells according to CSV format
+void CSVReader::line_to_cells(const string& line, CSVContainerAdapter* adapter) {
 	bool half_cell = false, have_comma = false;
 	int now = -1, left = 0, len = line.length();
+	string cell;
+
 	while (++now <= len) {
 		have_comma = have_comma || (line[now] == cell_delimiter);
 		if (now == len || (have_comma && !half_cell)) {
-			cells.push_back(line.substr(left, now-left));
+			adapter->addToRow(cell);
+			cell.clear();
 			left = now + 1;
 			have_comma = false;
 			continue;
@@ -40,16 +41,20 @@ void CSVReader::line_to_cells(const string& line, vector<string>& cells) {
 				half_cell = true;
 			else if (now < len-1 && line[now+1] != DOUBLE_QUOTS) {
 				++now;
-				string cell = line.substr(left, now-left);
-				escape_double_quots(cell);
-				cells.push_back(cell);
+				adapter->addToRow(cell);
+				cell.clear();
 				left = now + 1;
 				have_comma = false;
 				half_cell = false;
-			} else
-				++now;
+			} else {
+				cell.push_back(line[now++]);
+			}
+			continue;
 		}
+
+		cell.push_back(line[now]);
 	}
+	adapter->addToRowDone();
 }
 
 
@@ -63,6 +68,8 @@ void CSVReader::set_line_delimiter(char delimiter) {
 }
 
 
+// not used now
+// To DO: escap the double quotions in the str
 void CSVReader::escape_double_quots(string& str) {
 	string tmp;
 	bool last_is_quot = false;

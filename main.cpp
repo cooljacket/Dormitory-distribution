@@ -27,11 +27,14 @@ int main(int argc, char* argv[]) {
 	transform_original_data(argv[1]);
 
 	cout << argv[1] << ' ' << file_after_process << endl;
-	// 首先读取处理过后的数据，成为4个组：男省内，男省外，女省内，女省外
+
+	//首先读取处理过后的数据
+	CSVVectorContainer vec;
+	CSVReader::read(file_after_process, &vec, false);
+	vector<vector<string> >& data = vec.getData();
+
+	// 将处理过后的数据分成4个组：男省内，男省外，女省内，女省外
 	vector<vector<Student> > all_stus(4);
-	vector<vector<string> > data;
-	CSVReader reader;
-	reader.read(file_after_process, data, false);
 	for (int i = 0; i < data.size(); ++i) {
 		Student stu(data[i]);
 		all_stus[stu.getKind()].push_back(stu);
@@ -175,7 +178,7 @@ void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out) {
 	if (!special.empty())
 		result.push_back(special);
 
-	out << "宿舍号,学号,姓名,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,家庭人均收入,集体住宿经历,喜欢开空调" << endl;
+	out << "宿舍号,学号,姓名,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,集体住宿经历,家庭人均收入,喜欢开空调" << endl;
 	for (int i = 0; i < result.size(); ++i) {
 		out << i+1;
 		for (int j = 0; j < result[i].size(); ++j) {

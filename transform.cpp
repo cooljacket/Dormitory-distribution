@@ -1,7 +1,10 @@
 #include "transform.h"
 
-const char* file_after_process = "data/data.csv";
-const char* not_in_the_list = "results/not_in_the_list.txt";
+
+extern const char* GuangDong;
+extern const char* file_after_process;
+extern const char* not_in_the_list ;
+extern int str2int(const string& str);
 
 
 int transform_original_data(const char* inputFile) {
@@ -12,16 +15,8 @@ int transform_original_data(const char* inputFile) {
 }
 
 
-inline int str2int(const string& str) {
-	stringstream ss(str);
-	int num;
-	ss >> num;
-	return num;
-}
-
-
 void province2int(string& province) {
-	if (province.find("广东") != string::npos)
+	if (province.find(GuangDong) != string::npos)
 		province = "0";
 	else
 		province = "1";
@@ -29,11 +24,15 @@ void province2int(string& province) {
 
 
 void readStudentsList(const char* fileName, map<string, string>& list) {
-	CSVReader reader;
-	vector<vector<string> > data;
-	reader.read(fileName, data);
-	for (int i = 0; i < data.size(); ++i)
-		list[data[i][1]] = data[i][0];
+	// CSVReader reader;
+	// vector<vector<string> > data;
+	// reader.read(fileName, data);
+	// for (int i = 0; i < data.size(); ++i)
+	// 	list[data[i][1]] = data[i][0];
+
+	CSVMapContainer mc(1);
+	CSVReader::read(fileName, &mc);
+	mc.getColData(list, 0);
 }
 
 
@@ -41,9 +40,9 @@ void transform(const char* inputFile, const char* outputFile, const char* studen
 	map<string, string> list;
 	readStudentsList(studentsListFile, list);
 
-	CSVReader reader;
-	vector<vector<string> > data;
-	reader.read(inputFile, data);
+	CSVVectorContainer vec;
+	CSVReader::read(inputFile, &vec);
+	vector<vector<string> >& data = vec.getData();
 
 	fstream out(outputFile, ios::out);
 	set<string> names;

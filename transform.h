@@ -16,11 +16,12 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include "CSVReader.h"
+#include "CSVReader/CSVReader.h"
+#include "CSVReader/CSVVectorContainer.h"
+#include "CSVReader/CSVMapContainer.h"
 using namespace std;
 
 
-inline int str2int(const string& str);
 void province2int(string& province);
 void readStudentsList(const char* fileName, map<string, string>& list);
 void transform(const char* inputFile, const char* outputFile, const char* studentsListFile);

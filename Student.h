@@ -6,6 +6,8 @@
 #include <vector>
 using namespace std;
 
+extern int str2int(const string& str);
+
 class Student : public Element
 {
 	static const int size = 15;

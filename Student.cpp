@@ -1,8 +1,8 @@
 #include "Student.h"
-#include "transform.h"
 #include <stdio.h>
 #include <iostream>
 using namespace std;
+
 
 
 const double Student::question_ratio[] = {0, 0, 0.2, 0.2, 0.15, 0.15, 0.1, 0.1, 0.05, 0.05};
@@ -22,8 +22,8 @@ const string Student::answers[size][6] = {
 	{"", "外出聚会"},
 	{"", "其他"},
 	{"是", "不清楚", "否"},
-	{"500及以下", "500-1500", "1500-3000", "3000及以上"},
 	{"有", "无"},
+	{"500及以下", "500-1500", "1500-3000", "3000及以上"},
 	{"是", "无所谓", "否"}
 };
 

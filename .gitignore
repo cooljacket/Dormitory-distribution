@@ -4,3 +4,4 @@ out
 *.xls
 *.xlsx
 results/*
+*.zip
