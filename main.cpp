@@ -178,7 +178,7 @@ void divide(vector<Student>& GroupA, vector<Student>& GroupB, ostream& out) {
 	if (!special.empty())
 		result.push_back(special);
 
-	out << "宿舍号,学号,姓名,性别,生源地,起床时间,就寝时间,性格,兴趣爱好,易受他人影响,集体住宿经历,家庭人均收入,喜欢开空调" << endl;
+	out << "宿舍号,学号,姓名,性别,生源地,起床时间,就寝时间,兴趣爱好,性格,易受他人影响,集体住宿经历,家庭人均收入,喜欢开空调" << endl;
 	for (int i = 0; i < result.size(); ++i) {
 		out << i+1;
 		for (int j = 0; j < result[i].size(); ++j) {

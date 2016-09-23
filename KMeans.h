@@ -123,7 +123,8 @@ public:
 			centroids[c] += elements[*it];
 			++it;
 		}
-		centroids[c] /= points.size();
+		if (points.size() > 1)
+			centroids[c] /= points.size();
 		// printf("heheheh size=%d, c=%d\n", int(points.size()), int(c));
 	}
 
